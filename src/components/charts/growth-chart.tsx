@@ -10,49 +10,68 @@ import {
   ResponsiveContainer,
   Legend,
 } from 'recharts';
-import { ChartDataPoint } from '@/types/calculation';
-import { formatCurrency } from '@/lib/calculations/compound';
 
-interface GrowthChartProps {
-  data: ChartDataPoint[];
+export interface ChartAreaConfig {
+  dataKey: string;
+  name: string;
+  color: string;
+  stackId?: string;
+  fillOpacity?: number;
 }
 
-export function GrowthChart({ data }: GrowthChartProps) {
-  const formatTooltip = (value: number, name: string) => {
-    const labels = {
-      investment: '投資元本',
-      interest: '運用益',
-      total: '合計',
-    };
-    return [formatCurrency(value), labels[name as keyof typeof labels] || name];
+export interface ChartConfig {
+  xAxisKey: string;
+  xAxisLabel?: string;
+  yAxisFormatter?: (value: number) => string;
+  tooltipFormatter?: (value: number, name: string) => [string, string];
+  tooltipLabelFormatter?: (label: string | number) => string;
+  areas: ChartAreaConfig[];
+  height?: number;
+  margin?: { top: number; right: number; left: number; bottom: number };
+}
+
+interface GrowthChartProps<T = Record<string, unknown>> {
+  data: T[];
+  config: ChartConfig;
+  title?: string;
+}
+
+export function GrowthChart<T = Record<string, unknown>>({ data, config, title }: GrowthChartProps<T>) {
+  const defaultTooltipFormatter = (value: number, name: string) => {
+    return [value.toLocaleString(), name];
   };
 
-  const formatYAxisTick = (value: number) => {
-    if (value >= 100000000) {
-      return `${Math.round(value / 100000000)}億円`;
-    } else if (value >= 10000) {
-      return `${Math.round(value / 10000)}万円`;
-    }
-    return formatCurrency(value);
+  const defaultYAxisFormatter = (value: number) => {
+    return value.toLocaleString();
   };
+
+  const defaultTooltipLabelFormatter = (label: string | number) => {
+    return String(label);
+  };
+
+  const height = config.height || 384; // 96 * 4 = 384px (h-96)
+  const margin = config.margin || { top: 20, right: 30, left: 20, bottom: 60 }; // 凡例用に下部マージンを拡大
 
   return (
-    <div className="w-full h-96">
+    <div className="w-full" style={{ height: `${height}px` }}>
+      {title && (
+        <h3 className="text-lg font-semibold mb-4 text-center">{title}</h3>
+      )}
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+        <AreaChart data={data} margin={margin}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis 
-            dataKey="year" 
+            dataKey={config.xAxisKey}
             tick={{ fontSize: 12 }}
-            tickFormatter={(value) => `${value}年`}
+            tickFormatter={config.xAxisLabel ? (value) => `${value}${config.xAxisLabel}` : undefined}
           />
           <YAxis 
             tick={{ fontSize: 12 }}
-            tickFormatter={formatYAxisTick}
+            tickFormatter={config.yAxisFormatter || defaultYAxisFormatter}
           />
           <Tooltip 
-            formatter={formatTooltip}
-            labelFormatter={(label) => `${label}年目`}
+            formatter={config.tooltipFormatter || defaultTooltipFormatter}
+            labelFormatter={config.tooltipLabelFormatter || defaultTooltipLabelFormatter}
             contentStyle={{
               backgroundColor: '#ffffff',
               border: '1px solid #cccccc',
@@ -69,25 +88,27 @@ export function GrowthChart({ data }: GrowthChartProps) {
               marginBottom: '4px',
             }}
           />
-          <Legend />
-          <Area
-            type="monotone"
-            dataKey="investment"
-            stackId="1"
-            stroke="#16a34a"
-            fill="#16a34a"
-            fillOpacity={0.6}
-            name="投資元本"
+          <Legend 
+            verticalAlign="bottom"
+            height={36}
+            iconType="rect"
+            wrapperStyle={{
+              paddingTop: '20px',
+              fontSize: '14px',
+            }}
           />
-          <Area
-            type="monotone"
-            dataKey="interest"
-            stackId="1"
-            stroke="#22c55e"
-            fill="#22c55e"
-            fillOpacity={0.8}
-            name="運用益"
-          />
+          {config.areas.map((area) => (
+            <Area
+              key={area.dataKey}
+              type="monotone"
+              dataKey={area.dataKey}
+              stackId={area.stackId}
+              stroke={area.color}
+              fill={area.color}
+              fillOpacity={area.fillOpacity || 0.6}
+              name={area.name}
+            />
+          ))}
         </AreaChart>
       </ResponsiveContainer>
     </div>

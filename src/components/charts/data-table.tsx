@@ -1,106 +1,126 @@
 'use client';
 
-import { ChartDataPoint } from '@/types/calculation';
-import { formatCurrency, formatNumber } from '@/lib/calculations/compound';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-interface DataTableProps {
-  data: ChartDataPoint[];
+export interface TableColumn<T = Record<string, unknown>> {
+  key: keyof T;
+  header: string;
+  align?: 'left' | 'center' | 'right';
+  render?: (value: T[keyof T], row: T, index: number) => React.ReactNode;
+  className?: string;
 }
 
-export function DataTable({ data }: DataTableProps) {
+export interface SummaryItem {
+  label: string;
+  value: React.ReactNode;
+  className?: string;
+}
+
+export interface DataTableConfig<T = Record<string, unknown>> {
+  columns: TableColumn<T>[];
+  summary?: SummaryItem[];
+  showSummary?: boolean;
+  striped?: boolean;
+  hoverable?: boolean;
+}
+
+interface DataTableProps<T = Record<string, unknown>> {
+  data: T[];
+  config: DataTableConfig<T>;
+  title?: string;
+  className?: string;
+}
+
+export function DataTable<T = Record<string, unknown>>({ data, config, title, className }: DataTableProps<T>) {
   if (data.length === 0) {
     return null;
   }
 
+  const defaultRender = (value: T[keyof T]) => {
+    if (value === null || value === undefined) return '';
+    return String(value);
+  };
+
+  const getAlignClass = (align?: string) => {
+    switch (align) {
+      case 'center':
+        return 'text-center';
+      case 'right':
+        return 'text-right';
+      default:
+        return 'text-left';
+    }
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>年次データ詳細</CardTitle>
-      </CardHeader>
+    <Card className={className}>
+      {title && (
+        <CardHeader>
+          <CardTitle>{title}</CardTitle>
+        </CardHeader>
+      )}
       <CardContent>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b">
-                <th className="text-left p-2 font-medium">年数</th>
-                <th className="text-right p-2 font-medium">投資元本</th>
-                <th className="text-right p-2 font-medium">運用益</th>
-                <th className="text-right p-2 font-medium">合計金額</th>
-                <th className="text-right p-2 font-medium">利益率</th>
+                {config.columns.map((column) => (
+                  <th 
+                    key={column.key}
+                    className={`p-2 font-medium ${getAlignClass(column.align)} ${column.className || ''}`}
+                  >
+                    {column.header}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
-              {data.map((row, index) => {
-                const profitRate = row.investment > 0 ? (row.interest / row.investment) * 100 : 0;
-                
-                return (
-                  <tr 
-                    key={row.year} 
-                    className={`border-b hover:bg-muted/50 ${
-                      index % 2 === 0 ? 'bg-muted/20' : ''
-                    }`}
-                  >
-                    <td className="p-2 font-medium">{row.year}年目</td>
-                    <td className="p-2 text-right">{formatCurrency(row.investment)}</td>
-                    <td className="p-2 text-right font-medium">
-                      <span className={row.interest >= 0 ? 'text-green-600' : 'text-red-600'}>
-                        {formatCurrency(row.interest)}
-                      </span>
-                    </td>
-                    <td className="p-2 text-right font-semibold">
-                      <span className={row.total >= 0 ? 'text-green-600' : 'text-red-600'}>
-                        {formatCurrency(row.total)}
-                      </span>
-                    </td>
-                    <td className="p-2 text-right">
-                      <span className={profitRate > 0 ? 'text-green-600' : profitRate < 0 ? 'text-red-600' : 'text-gray-500'}>
-                        {formatNumber(profitRate)}%
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
+              {data.map((row, index) => (
+                <tr 
+                  key={index}
+                  className={`border-b ${
+                    config.hoverable !== false ? 'hover:bg-muted/50' : ''
+                  } ${
+                    config.striped !== false && index % 2 === 0 ? 'bg-muted/20' : ''
+                  }`}
+                >
+                  {config.columns.map((column) => {
+                    const value = row[column.key];
+                    const content = column.render 
+                      ? column.render(value, row, index)
+                      : defaultRender(value);
+                    
+                    return (
+                      <td 
+                        key={column.key}
+                        className={`p-2 ${getAlignClass(column.align)} ${column.className || ''}`}
+                      >
+                        {content}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
         
-        <div className="mt-4 p-4 bg-muted/30 rounded-lg">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-            <div>
-              <div className="text-muted-foreground">最終投資元本</div>
-              <div className="font-semibold">
-                {formatCurrency(data[data.length - 1]?.investment || 0)}
-              </div>
-            </div>
-            <div>
-              <div className="text-muted-foreground">最終運用益</div>
-              <div className="font-semibold">
-                <span className={(data[data.length - 1]?.interest || 0) >= 0 ? 'text-green-600' : 'text-red-600'}>
-                  {formatCurrency(data[data.length - 1]?.interest || 0)}
-                </span>
-              </div>
-            </div>
-            <div>
-              <div className="text-muted-foreground">最終合計金額</div>
-              <div className="font-semibold">
-                <span className={(data[data.length - 1]?.total || 0) >= 0 ? 'text-green-600' : 'text-red-600'}>
-                  {formatCurrency(data[data.length - 1]?.total || 0)}
-                </span>
-              </div>
-            </div>
-            <div>
-              <div className="text-muted-foreground">最終利益率</div>
-              <div className="font-semibold">
-                {formatNumber(
-                  data[data.length - 1]?.investment > 0 
-                    ? ((data[data.length - 1]?.interest || 0) / (data[data.length - 1]?.investment || 1)) * 100
-                    : 0
-                )}%
-              </div>
+        {config.showSummary && config.summary && (
+          <div className="mt-4 p-4 bg-muted/30 rounded-lg">
+            <div className={`grid gap-4 text-sm ${
+              config.summary.length <= 2 ? 'grid-cols-2' :
+              config.summary.length <= 4 ? 'grid-cols-2 md:grid-cols-4' :
+              'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+            }`}>
+              {config.summary.map((item, index) => (
+                <div key={index} className={item.className}>
+                  <div className="text-muted-foreground">{item.label}</div>
+                  <div className="font-semibold">{item.value}</div>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
+        )}
       </CardContent>
     </Card>
   );
