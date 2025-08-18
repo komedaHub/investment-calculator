@@ -13,12 +13,19 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "InvestCalc - 投資・資産運用計算機",
+  title: "投資かんたん計算 - 投資・資産運用計算サイト",
   description: "複利計算、つみたてNISA、iDeCo、住宅ローンなど、投資・資産運用に関する計算を簡単に行える実用ツール集。将来の資産形成をシミュレーションして賢い投資計画を立てましょう。",
   keywords: ["投資計算", "複利計算", "つみたてNISA", "iDeCo", "住宅ローン", "資産運用", "シミュレーション"],
-  authors: [{ name: "InvestCalc" }],
+  icons: {
+    icon: [
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    shortcut: '/favicon.png',
+    apple: '/apple-touch-icon.png',
+  },
   openGraph: {
-    title: "InvestCalc - 投資・資産運用計算機",
+    title: "投資かんたん計算 - 投資・資産運用計算サイト",
     description: "複利計算、つみたてNISA、iDeCo、住宅ローンなど、投資・資産運用に関する計算を簡単に行える実用ツール集",
     type: "website",
     locale: "ja_JP",

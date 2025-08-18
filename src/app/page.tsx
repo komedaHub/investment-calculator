@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <div className="container mx-auto p-4 space-y-8">
       <div className="text-center space-y-4 py-8">
-        <h1 className="text-4xl font-bold tracking-tight">InvestCalc</h1>
+        <h1 className="text-4xl font-bold tracking-tight">投資かんたん計算</h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
           投資・資産運用に関する計算を簡単に行える実用ツール集
         </p>
