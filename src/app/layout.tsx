@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { StructuredData } from "@/components/seo/structured-data";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,6 +30,22 @@ export const metadata: Metadata = {
     description: "複利計算、つみたてNISA、iDeCo、住宅ローンなど、投資・資産運用に関する計算を簡単に行える実用ツール集",
     type: "website",
     locale: "ja_JP",
+    url: "https://example.com",
+    siteName: "投資かんたん計算",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "投資かんたん計算 - 投資・資産運用計算ツール",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "投資かんたん計算 - 投資・資産運用計算サイト",
+    description: "複利計算、つみたてNISA、iDeCo、住宅ローンなど、投資・資産運用に関する計算を簡単に行える実用ツール集",
+    images: ["/twitter-card.png"],
   },
   robots: {
     index: true,
@@ -43,6 +60,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
+      <head>
+        <StructuredData type="home" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

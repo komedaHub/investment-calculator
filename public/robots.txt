@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://example.com/sitemap.xml
+
+# Disallow development files
+Disallow: /api/
+Disallow: /_next/
+Disallow: /.vercel/
+Disallow: /admin/
+Disallow: /test/
+
+# Allow important SEO files
+Allow: /favicon.ico
+Allow: /icon.svg
+Allow: /apple-touch-icon.png
