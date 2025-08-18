@@ -1,36 +1,127 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 投資計算機 (Investment Calculator)
 
-## Getting Started
+Next.js + TypeScript で構築された複利計算機アプリケーションです。
 
-First, run the development server:
+## 特徴
+
+- 複利計算機能
+- 月次積立投資対応
+- インタラクティブなチャート表示
+- 年次推移データテーブル
+
+## 技術スタック
+
+- **フレームワーク**: Next.js 15 (App Router)
+- **言語**: TypeScript
+- **UI**: Tailwind CSS + shadcn/ui
+- **フォーム**: React Hook Form + Zod
+- **チャート**: Recharts
+- **状態管理**: Zustand
+- **コンポーネント管理**: Storybook
+
+## 環境構築
+
+### 必要な環境
+
+- Node.js 18以上
+- npm または yarn または pnpm
+
+### セットアップ手順
+
+1. **リポジトリのクローン**
+   ```bash
+   git clone <repository-url>
+   cd investment-calculator
+   ```
+
+2. **依存関係のインストール**
+   ```bash
+   npm install
+   # または
+   yarn install
+   # または
+   pnpm install
+   ```
+
+## 起動方法
+
+### 開発サーバーの起動
 
 ```bash
 npm run dev
-# or
+# または
 yarn dev
-# or
+# または
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ブラウザで [http://localhost:3000](http://localhost:3000) にアクセスしてアプリケーションを確認できます。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Storybookの起動
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run storybook
+# または
+yarn storybook
+# または
+pnpm storybook
+```
 
-## Learn More
+ブラウザで [http://localhost:6006](http://localhost:6006) にアクセスしてStorybookを確認できます。
 
-To learn more about Next.js, take a look at the following resources:
+## ビルド
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### プロダクション用ビルド
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run build
+npm run start
+```
 
-## Deploy on Vercel
+### Storybookのビルド
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run build-storybook
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 使用方法
+
+1. **初期投資額**を入力
+2. **年利率**をパーセントで入力（例：5% → 5と入力）
+3. **投資期間**を年数で入力
+4. **月次積立額**を入力（オプション）
+5. 「計算する」ボタンをクリック
+6. チャートとデータテーブルで結果を確認
+
+## プロジェクト構造
+
+```
+src/
+├── app/                 # Next.js App Router
+├── components/          # Reactコンポーネント
+│   ├── charts/         # チャート関連
+│   ├── forms/          # フォーム関連
+│   └── ui/             # UIコンポーネント
+├── lib/                # ユーティリティとロジック
+│   └── calculations/   # 計算ロジック
+├── types/              # TypeScript型定義
+└── stories/            # Storybookサンプル
+```
+
+## 開発
+
+ファイルを編集すると、開発サーバーが自動的に変更を反映します。
+
+- `src/app/page.tsx` - メインページ
+- `src/components/` - コンポーネント
+- `src/lib/calculations/` - 計算ロジック
+
+## Lint
+
+```bash
+npm run lint
+```
+
+## ライセンス
+
+MIT License
