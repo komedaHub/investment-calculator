@@ -5,6 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CompoundForm } from '@/components/forms/compound-form';
 import { GrowthChart, ChartConfig } from '@/components/charts/growth-chart';
 import { DataTable, DataTableConfig } from '@/components/charts/data-table';
+import { ErrorBoundary } from '@/components/common/error-boundary';
+import { ErrorMessage } from '@/components/common/error-message';
+import { LoadingOverlay } from '@/components/common/loading';
 import { 
   calculateCompound, 
   getChartData, 
@@ -13,27 +16,38 @@ import {
 } from '@/lib/calculations/compound';
 import { CompoundCalculationFormData } from '@/lib/validations';
 import { CompoundCalculationResult, ChartDataPoint } from '@/types/calculation';
+import { useErrorHandler } from '@/lib/hooks/use-error-handler';
+import { getErrorMessage, logError } from '@/lib/utils/error-utils';
 import React from 'react';
 
 export function CompoundCalculator() {
   const [result, setResult] = useState<CompoundCalculationResult | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+  const { error, isError, clearError, handleError } = useErrorHandler();
 
   const handleCalculate = async (data: CompoundCalculationFormData) => {
-    setIsCalculating(true);
-    
-    // 計算処理をシミュレート（実際には即座に完了）
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    const calculationResult = calculateCompound({
-      principal: data.principal,
-      annualRate: data.annualRate,
-      years: data.years,
-      monthlyContribution: data.monthlyContribution || 0,
-    });
-    
-    setResult(calculationResult);
-    setIsCalculating(false);
+    try {
+      setIsCalculating(true);
+      clearError();
+      
+      // 計算処理をシミュレート（実際には即座に完了）
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const calculationResult = calculateCompound({
+        principal: data.principal,
+        annualRate: data.annualRate,
+        years: data.years,
+        monthlyContribution: data.monthlyContribution || 0,
+      });
+      
+      setResult(calculationResult);
+    } catch (error) {
+      logError(error, "CompoundCalculator.handleCalculate");
+      handleError(error);
+      setResult(null);
+    } finally {
+      setIsCalculating(false);
+    }
   };
 
   const chartData = result ? getChartData(result) : [];
@@ -153,18 +167,29 @@ export function CompoundCalculator() {
   };
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold">複利計算機</h1>
-        <p className="text-muted-foreground">
-          複利の力を活用した資産運用をシミュレーションします
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div>
-          <CompoundForm onCalculate={handleCalculate} isCalculating={isCalculating} />
+    <ErrorBoundary>
+      <div className="container mx-auto p-4 space-y-6">
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl font-bold">複利計算機</h1>
+          <p className="text-muted-foreground">
+            複利の力を活用した資産運用をシミュレーションします
+          </p>
         </div>
+
+        {isError && (
+          <ErrorMessage
+            type="error"
+            title="計算エラー"
+            message={getErrorMessage(error)}
+          />
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div>
+            <LoadingOverlay isLoading={isCalculating} message="計算中...">
+              <CompoundForm onCalculate={handleCalculate} isCalculating={isCalculating} />
+            </LoadingOverlay>
+          </div>
 
         {result && (
           <div className="space-y-6">
@@ -230,6 +255,7 @@ export function CompoundCalculator() {
           />
         </div>
       )}
-    </div>
+      </div>
+    </ErrorBoundary>
   );
 }

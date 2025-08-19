@@ -4,6 +4,11 @@ import {
   MonthlyBreakdown,
   ChartDataPoint 
 } from '@/types/calculation';
+import { 
+  validateNumericInput, 
+  safeCalculate, 
+  CalculationError 
+} from '@/lib/utils/error-utils';
 
 export const calculateCompoundInterest = (
   principal: number,
@@ -32,38 +37,64 @@ export const calculateAnnuityFutureValue = (
 export const calculateCompound = (input: CompoundCalculationInput): CompoundCalculationResult => {
   const { principal, annualRate, years, monthlyContribution = 0, compoundFrequency = 12 } = input;
   
-  let currentValue = principal;
-  let totalInvestment = principal;
-  const monthlyBreakdown: MonthlyBreakdown[] = [];
+  // 入力値のバリデーション
+  validateNumericInput(principal, "元本", 0, 1000000000);
+  validateNumericInput(annualRate, "年利率", -0.1, 1);
+  validateNumericInput(years, "投資期間", 0.1, 100);
+  validateNumericInput(monthlyContribution, "月々の積立額", 0, 10000000);
   
-  const monthlyRate = annualRate / 12;
+  return safeCalculate(() => {
+    let currentValue = principal;
+    let totalInvestment = principal;
+    const monthlyBreakdown: MonthlyBreakdown[] = [];
+    
+    const monthlyRate = annualRate / 12;
+    
+    // 極端な値のチェック
+    if (years > 100) {
+      throw new CalculationError("投資期間は100年以下で入力してください");
+    }
+    
+    if (monthlyRate < -0.1) {
+      throw new CalculationError("月利率が極端に低い値です");
+    }
   
-  for (let month = 1; month <= years * 12; month++) {
-    currentValue = currentValue * (1 + monthlyRate) + monthlyContribution;
-    totalInvestment += monthlyContribution;
+    for (let month = 1; month <= years * 12; month++) {
+      currentValue = currentValue * (1 + monthlyRate) + monthlyContribution;
+      totalInvestment += monthlyContribution;
+      
+      // 計算結果の妥当性チェック
+      if (!isFinite(currentValue) || currentValue < 0) {
+        throw new CalculationError(`${month}ヶ月目の計算で無効な値になりました`);
+      }
+      
+      if (currentValue > Number.MAX_SAFE_INTEGER) {
+        throw new CalculationError("計算結果が大きすぎます。入力値を調整してください");
+      }
+      
+      const totalInterest = currentValue - totalInvestment;
+      
+      monthlyBreakdown.push({
+        month,
+        investment: totalInvestment,
+        interest: totalInterest,
+        total: currentValue,
+      });
+    }
     
-    const totalInterest = currentValue - totalInvestment;
-    
-    monthlyBreakdown.push({
-      month,
+    const finalResult = monthlyBreakdown[monthlyBreakdown.length - 1] || {
       investment: totalInvestment,
-      interest: totalInterest,
-      total: currentValue,
-    });
-  }
-  
-  const finalResult = monthlyBreakdown[monthlyBreakdown.length - 1] || {
-    investment: totalInvestment,
-    interest: 0,
-    total: totalInvestment,
-  };
-  
-  return {
-    futureValue: finalResult.total,
-    totalInvestment: finalResult.investment,
-    totalInterest: finalResult.interest,
-    monthlyBreakdown,
-  };
+      interest: 0,
+      total: totalInvestment,
+    };
+    
+    return {
+      futureValue: finalResult.total,
+      totalInvestment: finalResult.investment,
+      totalInterest: finalResult.interest,
+      monthlyBreakdown,
+    };
+  }, "複利計算中にエラーが発生しました");
 };
 
 export const getChartData = (result: CompoundCalculationResult): ChartDataPoint[] => {
