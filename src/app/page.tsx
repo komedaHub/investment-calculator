@@ -54,20 +54,23 @@ export default function Home() {
           </CardContent>
         </Card>
 
-        <Card className="opacity-50">
+        <Card className="hover:shadow-lg transition-shadow">
           <CardHeader>
             <div className="flex items-center space-x-2">
-              <Calculator className="w-6 h-6 text-muted-foreground" />
-              <CardTitle>iDeCo計算機</CardTitle>
+              <Calculator className="w-6 h-6 text-primary" />
+              <CardTitle>ふるさと納税 控除上限額シミュレーター</CardTitle>
             </div>
             <CardDescription>
-              職業別拠出上限と節税効果を考慮した老後資産形成プラン。
+              年収や家族構成から、ふるさと納税の控除上限額を自動計算。
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full" disabled>
-              準備中
-            </Button>
+            <Link href="/furusato">
+              <Button variant="outline" className="w-full">
+                <Calculator className="w-4 h-4 mr-2" />
+                計算を開始
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       </div>

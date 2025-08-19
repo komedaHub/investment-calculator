@@ -27,15 +27,15 @@ const calculators = [
     available: true,
   },
   {
+    title: "ふるさと納税 控除上限額シミュレーター",
+    href: "/furusato",
+    description: "年収や家族構成から、ふるさと納税の控除上限額を自動計算",
+    available: true,
+  },
+  {
     title: "つみたてNISA計算機",
     href: "/nisa",
     description: "年間120万円の投資枠を活用した20年間の資産形成シミュレーション",
-    available: false,
-  },
-  {
-    title: "iDeCo計算機",
-    href: "/ideco",
-    description: "職業別拠出上限と節税効果を考慮した老後資産形成プラン",
     available: false,
   },
   {

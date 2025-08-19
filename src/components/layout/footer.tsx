@@ -4,7 +4,7 @@ import { InvestmentIcon } from "@/components/ui/investment-icon"
 const calculatorLinks = [
   { title: "複利計算機", href: "/compound", available: true },
   { title: "つみたてNISA計算機", href: "/nisa", available: false },
-  { title: "iDeCo計算機", href: "/ideco", available: false },
+  { title: "ふるさと納税 控除上限額シミュレーター", href: "/furusato", available: true },
   { title: "住宅ローン計算機", href: "/loan", available: false },
 ]
 
