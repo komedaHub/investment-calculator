@@ -177,7 +177,7 @@ export function FurusatoForm({ onCalculate, isCalculating = false }: FurusatoFor
                       />
                     </FormControl>
                     <FormDescription>
-                      健康保険料、厚生年金保険料、雇用保険料等の合計額
+                      健康保険料、厚生年金保険料、雇用保険料等の合計額（一般的に年収の10-15%程度、上限は年収の30%）
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -275,7 +275,7 @@ export function FurusatoForm({ onCalculate, isCalculating = false }: FurusatoFor
                           value={field.value ? Math.round(field.value / 10000) : ''}
                         />
                       </FormControl>
-                      <FormDescription>年間支払保険料から計算される控除額</FormDescription>
+                      <FormDescription>年間支払保険料から計算される控除額（新制度：上限四万円）</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -363,7 +363,7 @@ export function FurusatoForm({ onCalculate, isCalculating = false }: FurusatoFor
                           value={field.value ? Math.round(field.value / 10000) : ''}
                         />
                       </FormControl>
-                      <FormDescription>iDeCo、小規模企業共済の掛金等</FormDescription>
+                      <FormDescription>iDeCo、小規模企業共済の掛金等（会社員：年額27.6万円まで、自営業：年額81.6万円まで）</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}

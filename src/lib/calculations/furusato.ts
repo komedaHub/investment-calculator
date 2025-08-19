@@ -292,8 +292,8 @@ export function calculateFurusato(input: FurusatoCalculationInput): FurusatoCalc
     // おすすめ寄附金額（上限の90%）
     const recommendedDonation = Math.floor(deductionLimit * CONFIG.safetyFactor);
     
-    // 節税効果の計算
-    const donationAmount = recommendedDonation;
+    // 節税効果の計算（控除上限額で寄附した場合の節税効果）
+    const donationAmount = deductionLimit;
     const incomeTaxReduction = Math.min(
       (donationAmount - CONFIG.selfBurdenAmount) * incomeTaxRate * 1.021,
       donationAmount * 0.4
