@@ -106,7 +106,7 @@ export function FurusatoCalculator() {
                 <CardContent className="space-y-4">
                   {/* 警告メッセージ */}
                   {result.warnings && result.warnings.length > 0 && (
-                    <div className="space-y-2">
+                    <div className="space-y-2" data-testid="warnings">
                       {result.warnings.map((warning, index) => (
                         <ErrorMessage
                           key={index}
@@ -126,7 +126,7 @@ export function FurusatoCalculator() {
                         <span className="text-sm text-blue-600 font-medium">控除上限額</span>
                         <p className="text-xs text-blue-500 mt-1">実質自己負担2,000円で済む上限</p>
                       </div>
-                      <span className="text-2xl font-bold text-blue-600">
+                      <span className="text-2xl font-bold text-blue-600" data-testid="deduction-limit">
                         {formatCurrency(result.deductionLimit)}
                       </span>
                     </div>
@@ -137,7 +137,7 @@ export function FurusatoCalculator() {
                         <span className="text-sm text-green-600 font-medium">おすすめ寄附金額</span>
                         <p className="text-xs text-green-500 mt-1">安全な寄附金額（上限の90%）</p>
                       </div>
-                      <span className="text-2xl font-bold text-green-600">
+                      <span className="text-2xl font-bold text-green-600" data-testid="recommended-donation">
                         {formatCurrency(result.recommendedDonation)}
                       </span>
                     </div>

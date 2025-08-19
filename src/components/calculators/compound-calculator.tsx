@@ -201,14 +201,14 @@ export function CompoundCalculator() {
                 <div className="grid grid-cols-1 gap-4">
                   <div className="flex justify-between items-center p-3 bg-muted rounded-lg">
                     <span className="font-medium">最終運用額</span>
-                    <span className="text-xl font-bold text-green-600">
+                    <span className="text-xl font-bold text-green-600" data-testid="final-amount">
                       {formatCurrency(result.futureValue)}
                     </span>
                   </div>
                   
                   <div className="flex justify-between items-center p-3 bg-muted rounded-lg">
                     <span className="font-medium">投資元本</span>
-                    <span className="text-lg">
+                    <span className="text-lg" data-testid="total-investment">
                       {formatCurrency(result.totalInvestment)}
                     </span>
                   </div>
@@ -240,11 +240,13 @@ export function CompoundCalculator() {
               <CardTitle>資産推移グラフ</CardTitle>
             </CardHeader>
             <CardContent>
-              <GrowthChart 
-                data={chartData} 
-                config={chartConfig}
-                title="資産推移チャート" 
-              />
+              <div data-testid="growth-chart">
+                <GrowthChart 
+                  data={chartData} 
+                  config={chartConfig}
+                  title="資産推移チャート" 
+                />
+              </div>
             </CardContent>
           </Card>
           

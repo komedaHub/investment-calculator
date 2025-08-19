@@ -10,6 +10,10 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:report": "playwright show-report",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
@@ -41,6 +45,7 @@
   "devDependencies": {
     "@chromatic-com/storybook": "^4.1.0",
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.54.2",
     "@storybook/addon-a11y": "^9.1.2",
     "@storybook/addon-docs": "^9.1.2",
     "@storybook/addon-onboarding": "^9.1.2",
